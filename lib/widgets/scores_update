@@ -1,0 +1,159 @@
+List<Map<String, dynamic>> updateGroupTable(
+  List<Map<String, dynamic>> matches,
+  List<dynamic> originalTeams,
+) {
+  final Map<String, TeamStats> standings = {};
+
+  // Initialize all teams
+  for (var team in originalTeams) {
+    final name = team['name']?.toString();
+    if (name != null) {
+      standings[name] = TeamStats(name);
+    }
+  }
+
+  // Process finished matches
+  for (var match in matches) {
+    if (match['status'] != 'finished') continue;
+
+    final team1 = match['team1'];
+    final team2 = match['team2'];
+    final score = match['score']?.toString();
+
+    if (score == null || !score.contains(':')) continue;
+
+    final scores = score.split(':');
+    final goals1 = int.tryParse(scores[0]) ?? 0;
+    final goals2 = int.tryParse(scores[1]) ?? 0;
+
+    standings.putIfAbsent(team1, () => TeamStats(team1));
+    standings.putIfAbsent(team2, () => TeamStats(team2));
+
+    final stats1 = standings[team1]!;
+    final stats2 = standings[team2]!;
+
+    stats1.played += 1;
+    stats2.played += 1;
+
+    stats1.goalsFor += goals1;
+    stats1.goalsAgainst += goals2;
+
+    stats2.goalsFor += goals2;
+    stats2.goalsAgainst += goals1;
+
+    if (goals1 > goals2) {
+      stats1.wins += 1;
+      stats2.losses += 1;
+    } else if (goals1 < goals2) {
+      stats2.wins += 1;
+      stats1.losses += 1;
+    } else {
+      stats1.draws += 1;
+      stats2.draws += 1;
+    }
+
+    // Add head-to-head results
+    stats1.addHeadToHead(team2, goals1, goals2);
+    stats2.addHeadToHead(team1, goals2, goals1);
+  }
+
+  List<TeamStats> sortedTeams = standings.values.toList();
+
+  sortedTeams.sort((a, b) {
+    // 1. Overall points first
+    int pointDiff = b.points - a.points;
+    if (pointDiff != 0) return pointDiff;
+
+    // 2. If tied on points, try head-to-head only if they played
+    if (a.hasPlayedAgainst(b.name) && b.hasPlayedAgainst(a.name)) {
+      final headToHeadResult = _compareHeadToHead(a, b);
+      if (headToHeadResult != 0) return headToHeadResult;
+    }
+
+    // 3. Overall goal difference
+    int gdDiff = b.goalDifference - a.goalDifference;
+    if (gdDiff != 0) return gdDiff;
+
+    // 4. Overall goals scored
+    int goalsForDiff = b.goalsFor - a.goalsFor;
+    if (goalsForDiff != 0) return goalsForDiff;
+
+    // 5. Alphabetical order
+    return a.name.compareTo(b.name);
+  });
+
+  return sortedTeams.map((team) => team.toJson()).toList();
+}
+
+int _compareHeadToHead(TeamStats a, TeamStats b) {
+  // Head-to-head points
+  int aPoints = a.headToHeadPoints[b.name] ?? 0;
+  int bPoints = b.headToHeadPoints[a.name] ?? 0;
+  if (aPoints != bPoints) {
+    return bPoints - aPoints;
+  }
+
+  // Head-to-head goal difference
+  int aGD = (a.headToHeadGoalsFor[b.name] ?? 0) - (a.headToHeadGoalsAgainst[b.name] ?? 0);
+  int bGD = (b.headToHeadGoalsFor[a.name] ?? 0) - (b.headToHeadGoalsAgainst[a.name] ?? 0);
+  if (aGD != bGD) {
+    return bGD - aGD;
+  }
+
+  // Head-to-head goals scored
+  int aGF = a.headToHeadGoalsFor[b.name] ?? 0;
+  int bGF = b.headToHeadGoalsFor[a.name] ?? 0;
+  if (aGF != bGF) {
+    return bGF - aGF;
+  }
+
+  return 0; // Still tied
+}
+
+class TeamStats {
+  String name;
+  int played = 0;
+  int wins = 0;
+  int draws = 0;
+  int losses = 0;
+  int goalsFor = 0;
+  int goalsAgainst = 0;
+
+  Map<String, int> headToHeadPoints = {};
+  Map<String, int> headToHeadGoalsFor = {};
+  Map<String, int> headToHeadGoalsAgainst = {};
+
+  TeamStats(this.name);
+
+  int get points => wins * 3 + draws;
+  int get goalDifference => goalsFor - goalsAgainst;
+
+  void addHeadToHead(String opponent, int gf, int ga) {
+    headToHeadGoalsFor[opponent] = (headToHeadGoalsFor[opponent] ?? 0) + gf;
+    headToHeadGoalsAgainst[opponent] = (headToHeadGoalsAgainst[opponent] ?? 0) + ga;
+
+    int matchPoints = 0;
+    if (gf > ga) {
+      matchPoints = 3;
+    } else if (gf == ga) {
+      matchPoints = 1;
+    }
+    headToHeadPoints[opponent] = (headToHeadPoints[opponent] ?? 0) + matchPoints;
+  }
+
+  bool hasPlayedAgainst(String opponent) {
+    // Return true if we have any head-to-head goals recorded
+    return headToHeadGoalsFor.containsKey(opponent) || headToHeadGoalsAgainst.containsKey(opponent);
+  }
+
+  Map<String, dynamic> toJson() => {
+        "name": name,
+        "played": played,
+        "wins": wins,
+        "draws": draws,
+        "losses": losses,
+        "goal_difference": goalDifference,
+        "points": points,
+        "goals_for": goalsFor,
+      };
+}

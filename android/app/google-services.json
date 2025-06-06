@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "419930408",
+    "firebase_url": "https://tomislav-668e0-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "tomislav-668e0",
+    "storage_bucket": "tomislav-668e0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:419930408:android:60a756ac1a273a48f2701d",
+        "android_client_info": {
+          "package_name": "com.example.tomislav"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzpmpN8ijTat8DRdTRgLU1d2eQLUWvGJs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
