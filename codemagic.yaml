@@ -1,3 +1,7 @@
+integrations:
+  app_store_connect:
+    integration_name: NK Tomislav
+
 workflows:
   ios-build:
     name: iOS Build for TestFlight
