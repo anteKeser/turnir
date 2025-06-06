@@ -1,6 +1,6 @@
 integrations:
   app_store_connect:
-    integration_name: NK Tomislav
+    integration_name: NK_Tomislav
 
 workflows:
   ios-build:
