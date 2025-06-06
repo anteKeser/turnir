@@ -6,6 +6,8 @@ workflows:
   ios-build:
     name: iOS Build for TestFlight
     environment:
+      vars:
+        BUNDLE_ID: "com.example.tomislav"
       groups:
         - app_store_credentials
         - firebase_credentials
