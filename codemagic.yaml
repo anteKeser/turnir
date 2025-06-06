@@ -2,14 +2,12 @@ workflows:
   ios-build:
     name: iOS Build for TestFlight
     environment:
-      vars:
-        BUNDLE_ID: "com.example.tomislav"
       groups:
         - app_store_credentials
         - firebase_credentials
       flutter: stable
       xcode: latest
-      # ❌ maknuto ios: jer nije podržano ovdje
+
     scripts:
       - name: Decode GoogleService-Info.plist
         script: |
@@ -26,5 +24,5 @@ workflows:
 
     publishing:
       app_store_connect:
-        auth: integration   # ✅ koristi povezanu integraciju iz Codemagic UI
+        auth: integration
         submit_to_testflight: true
