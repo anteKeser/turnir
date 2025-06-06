@@ -9,18 +9,11 @@ workflows:
         - firebase_credentials
       flutter: stable
       xcode: latest
-      ios:
-        automatic_code_signing:
-          enabled: true
-          apple_team_id: 5S96S5CF9V
+      # ❌ maknuto ios: jer nije podržano ovdje
     scripts:
       - name: Decode GoogleService-Info.plist
         script: |
           echo $GOOGLE_SERVICE_INFO | base64 --decode > ios/Runner/GoogleService-Info.plist
-
-      - name: Decode App Store Connect API key
-        script: |
-          echo $APP_STORE_CONNECT_API_KEY > authkey.p8
 
       - name: Flutter clean & build
         script: |
@@ -33,8 +26,5 @@ workflows:
 
     publishing:
       app_store_connect:
-        auth:
-          api_key: authkey.p8
-          issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-          key_id: $APP_STORE_CONNECT_KEY_ID
+        auth: integration   # ✅ koristi povezanu integraciju iz Codemagic UI
         submit_to_testflight: true
