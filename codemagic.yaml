@@ -17,6 +17,13 @@ workflows:
       xcode: latest
 
     scripts:
+      - name: Set up iOS project
+        script: |
+          # Generate iOS files if missing
+          if [ ! -d "ios" ]; then
+            flutter create --platforms ios .
+          fi
+
       - name: Set up Firebase
         script: |
           mkdir -p ios/Runner
@@ -24,20 +31,11 @@ workflows:
           plutil -replace MinimumOSVersion -string "13.0" ios/Runner/Info.plist
           sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = .*;/IPHONEOS_DEPLOYMENT_TARGET = 13.0;/g' ios/Runner.xcodeproj/project.pbxproj
 
-      - name: Generate Podfile
+      - name: Prepare Flutter dependencies
         script: |
-          cat <<EOF > ios/Podfile
-          platform :ios, '13.0'
-          use_frameworks! :linkage => :static
-          
-          # Flutter pods
-          flutter_application_path = '../'
-          load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
-          
-          target 'Runner' do
-            install_all_flutter_pods(flutter_application_path)
-          end
-          EOF
+          flutter clean
+          flutter pub get
+          flutter precache --ios
 
       - name: Install pods
         script: |
@@ -47,8 +45,6 @@ workflows:
 
       - name: Build IPA
         script: |
-          flutter clean
-          flutter pub get
           flutter build ipa --release --no-codesign
 
     artifacts:
