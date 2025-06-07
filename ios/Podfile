@@ -1,14 +1,21 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '13.0'
+platform :ios, '11.0'
 
-# Include the Flutter pod helper, which defines flutter_install_all_ios_pods
-flutter_root = File.expand_path('..', File.dirname(__FILE__))
-load File.join(flutter_root, 'Flutter', 'podhelper.rb')
+# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+project 'Runner', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+
+flutter_application_path = File.expand_path('..')
+load File.join(flutter_application_path, '.flutter-plugins-dependencies')
 
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # Install all Flutter pods
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
