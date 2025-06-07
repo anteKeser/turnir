@@ -1,8 +1,14 @@
+# Uncomment this line to define a global platform for your project
 platform :ios, '13.0'
+
+# Include the Flutter pod helper, which defines flutter_install_all_ios_pods
+flutter_root = File.expand_path('..', File.dirname(__FILE__))
+load File.join(flutter_root, 'Flutter', 'podhelper.rb')
 
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
+  # Install all Flutter pods
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
