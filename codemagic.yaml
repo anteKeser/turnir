@@ -30,8 +30,12 @@ workflows:
           platform :ios, '13.0'
           use_frameworks! :linkage => :static
           
+          # Flutter pods
+          flutter_application_path = '../'
+          load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
+          
           target 'Runner' do
-            flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+            install_all_flutter_pods(flutter_application_path)
           end
           EOF
 
