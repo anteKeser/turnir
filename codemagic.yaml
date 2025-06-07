@@ -24,6 +24,17 @@ workflows:
           plutil -replace MinimumOSVersion -string "13.0" ios/Runner/Info.plist
           sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = .*;/IPHONEOS_DEPLOYMENT_TARGET = 13.0;/g' ios/Runner.xcodeproj/project.pbxproj
 
+      - name: Generate Podfile
+        script: |
+          cat <<EOF > ios/Podfile
+          platform :ios, '13.0'
+          use_frameworks! :linkage => :static
+          
+          target 'Runner' do
+            flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+          end
+          EOF
+
       - name: Install pods
         script: |
           cd ios
@@ -35,7 +46,6 @@ workflows:
           flutter clean
           flutter pub get
           flutter build ipa --release --no-codesign
-          ls -la build/ios/ipa/
 
     artifacts:
       - build/ios/ipa/*.ipa
