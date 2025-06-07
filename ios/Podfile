@@ -1,1 +1,9 @@
 platform :ios, '13.0'
+workspace 'Runner.xcworkspace'
+
+# Flutter will automatically add dependencies during build
+# This empty target is needed for CocoaPods integration
+target 'Runner' do
+  use_frameworks!
+  use_modular_headers!
+end
