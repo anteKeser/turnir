@@ -10,7 +10,6 @@ workflows:
         BUNDLE_ID: "com.example.tomislav"
       groups:
         - app_store_credentials
-        - firebase_credentials
       flutter: stable
       xcode: latest
 
