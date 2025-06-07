@@ -9,18 +9,12 @@ workflows:
       vars:
         BUNDLE_ID: "com.example.tomislav"
         FLUTTER_BUILD_MODE: release
-        FLUTTER_IOS_DEPLOYMENT_TARGET: 13.0
+        FLUTTER_IOS_DEPLOYMENT_TARGET: "13.0"
       groups:
         - app_store_credentials
         - firebase_credentials
       flutter: stable
       xcode: latest
-
-    caching:
-      cache_paths:
-        - ~/.pub-cache
-        - ios/Pods
-        - ios/.symlinks
 
     scripts:
       - name: Set up Firebase
@@ -41,11 +35,10 @@ workflows:
           flutter clean
           flutter pub get
           flutter build ipa --release --no-codesign
-          ls -la build/ios/ipa/  # Verify IPA exists
+          ls -la build/ios/ipa/
 
     artifacts:
       - build/ios/ipa/*.ipa
-      - flutter_build.log
 
     publishing:
       app_store_connect:
