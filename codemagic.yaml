@@ -7,7 +7,7 @@ workflows:
     name: iOS Build for TestFlight
     environment:
       vars:
-        BUNDLE_ID: "com.example.tomislav"
+        BUNDLE_ID: "com.yourname.tomislav" # ✅ Use your actual bundle ID
         FLUTTER_BUILD_MODE: release
         FLUTTER_IOS_DEPLOYMENT_TARGET: "13.0"
       groups:
@@ -15,6 +15,11 @@ workflows:
         - firebase_credentials
       flutter: stable
       xcode: latest
+
+    code_signing:
+      certificate_url: Encrypted(...) # ✅ Add your certificate URL from Codemagic
+      certificate_password: Encrypted(...) # ✅ Add your certificate password
+      provisioning_profile_url: Encrypted(...) # ✅ Add your provisioning profile URL
 
     scripts:
       - name: Set up iOS project
@@ -45,7 +50,7 @@ workflows:
 
       - name: Build IPA
         script: |
-          flutter build ipa --release --no-codesign
+          flutter build ipa --release
 
     artifacts:
       - build/ios/ipa/*.ipa
