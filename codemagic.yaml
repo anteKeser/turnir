@@ -22,14 +22,19 @@ workflows:
         script: |
           flutter clean
           flutter pub get
-          flutter build ios --release
+          flutter build ios --release --no-codesign
 
     artifacts:
       - build/ios/ipa/*.ipa
 
     publishing:
       app_store_connect:
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        api_key: NK_Tomislav
         submit_to_testflight: true
+
+    # Tell Codemagic to use the uploaded provisioning profile and certificate
+    # (these will be automatically matched by Codemagic by bundle ID and cert name)
+    code_signing:
+      ios:
+        distribution_certificate: NK_Tomislav Distribution Certificate
+        provisioning_profile: NK_Tomislav App Store Profile
