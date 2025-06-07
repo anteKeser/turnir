@@ -33,7 +33,4 @@ workflows:
         key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
-    code_signing:
-      ios:
-        distribution_certificate: NK_Tomislav
-        provisioning_profile: NK_Tomislav
+
